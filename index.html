@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Portfolio of Jonathan De La Cruz — Instructional Designer based in Plano, Texas.">
+  <meta name="description" content="Portfolio of Jonathan De La Cruz, Instructional Designer based in Plano, Texas.">
   <link rel="icon" type="image/png" href="/brand/logo.png">
-  <title>Jonathan De La Cruz — Instructional Designer</title>
-  <link rel="stylesheet" href="/_astro/global.C__PRQxV.css?v=2026091125">
+  <title>Jonathan De La Cruz | Instructional Designer</title>
+  <link rel="stylesheet" href="/_astro/global.C__PRQxV.css?v=2026091131">
 </head>
 <body>
 <a class="skip-link" href="#top">Skip to main content</a>
@@ -29,14 +29,10 @@
       <h1 id="hero-title">I turn complex business challenges into measurable performance gains.</h1>
       <a class="hero-project-link" href="#projects">View projects <span class="ui-arrow ui-arrow-down" aria-hidden="true"></span></a>
     </div>
-    <!-- Interactive scratch panel. Scratching reveals the name and title underneath. -->
-    <div class="scratch-reveal" role="button" tabindex="0" aria-label="Scratch to reveal: Jonathan De La Cruz, Instructional Designer / Learning Experience Advisor">
-      <div class="scratch-underlay" aria-hidden="true">
-        <span class="scratch-name">Jonathan De La Cruz</span>
-        <span class="scratch-title">Instructional Designer / Learning Experience Advisor</span>
-      </div>
-      <canvas class="scratch-canvas" aria-hidden="true"></canvas>
-      <p class="scratch-prompt">Scratch to reveal</p>
+    <!-- Name and title, centred on the page and level with "Hello" -->
+    <div class="hero-identity">
+      <p class="hero-identity-name">Jonathan De La Cruz</p>
+      <p class="hero-identity-title">Instructional Designer / Learning Experience Advisor</p>
     </div>
   </section>
 
@@ -53,7 +49,7 @@
         <div class="tile-copy">
           <p class="tile-number"><span>01</span><span>Customer education</span><span>EdTech</span></p>
           <h3><a class="tile-main-link" href="/projects/01/">Assistiv<br><em>Onboarding</em></a></h3>
-          <p>Rebuilt an AI-powered LMS’s video tutorials as interactive, click-through walkthroughs — lifting platform usage 15% by Q2.</p>
+          <p>Rebuilt an AI-powered LMS’s video tutorials as interactive, click-through walkthroughs, lifting platform usage 15% by Q2.</p>
         </div>
         <div class="tile-art" aria-hidden="true"><img src="/images/cards/01.svg" alt=""></div>
         <a class="tile-experience" href="/projects/01/" aria-label="Experience: Assistiv Onboarding">Experience <span class="ui-arrow" aria-hidden="true"></span></a>
@@ -103,7 +99,7 @@
         <div class="tile-copy">
           <p class="tile-number"><span>06</span><span>AI governance</span><span>L&amp;D operations</span></p>
           <h3><a class="tile-main-link" href="/projects/06/">Governance,<br><em>Simplified</em></a></h3>
-          <p>Ten rules, three tiers — an AI and design standard curated over 18 months.</p>
+          <p>Ten rules and three tiers: an AI and design standard curated over 18 months.</p>
         </div>
         <div class="tile-art" aria-hidden="true"><img src="/images/cards/06.svg" alt=""></div>
         <a class="tile-experience" href="/projects/06/" aria-label="Experience: Governance, Simplified">Experience <span class="ui-arrow" aria-hidden="true"></span></a>
@@ -147,7 +143,7 @@
       </article>
       <article class="practice-item design">
         <h3>Deliver</h3>
-        <p>End&#8209;to&#8209;end lifecycle execution — scoping, planning, risk mitigation and delivery.
+        <p>End&#8209;to&#8209;end lifecycle execution: scoping, planning, risk mitigation and delivery.
           SME and stakeholder management, vendor coordination, workshop facilitation.</p>
       </article>
       <article class="practice-item experience">
@@ -185,7 +181,7 @@
     </figure>
     <div class="about-copy">
       <div class="about-story">
-        <p>I lead end&#8209;to&#8209;end L&amp;D project and program management — from initial scoping, needs
+        <p>I lead end&#8209;to&#8209;end L&amp;D project and program management, from initial scoping, needs
           assessment and curriculum planning through execution, delivery and post&#8209;launch evaluation.</p>
         <p>Partnering closely with cross&#8209;functional leadership and subject matter experts, I have
           spearheaded large&#8209;scale learning initiatives across corporate operations within Supply
@@ -218,76 +214,6 @@
 
 </main>
 
-<script type="module">
-  // Scratch-to-reveal hero panel. The cover color is read from the --blue
-  // token, so it follows the palette in _astro/global.C__PRQxV.css.
-  const panel = document.querySelector('.scratch-reveal');
-  const canvas = panel?.querySelector('.scratch-canvas');
-  if (panel instanceof HTMLElement && canvas instanceof HTMLCanvasElement) {
-    const ctx = canvas.getContext('2d');
-    let drawing = false;
-
-    const cover = () =>
-      getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#41B2A9';
-
-    // Repaint the cover only when the panel's width changes. Phones fire resize when the
-    // browser toolbar hides on scroll, which would otherwise wipe the scratch progress.
-    let paintedWidth = 0;
-    const resize = () => {
-      const box = panel.getBoundingClientRect();
-      if (Math.round(box.width) === paintedWidth) return;
-      paintedWidth = Math.round(box.width);
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.round(box.width * dpr);
-      canvas.height = Math.round(box.height * dpr);
-      canvas.style.width = `${box.width}px`;
-      canvas.style.height = `${box.height}px`;
-      ctx?.setTransform(dpr, 0, 0, dpr, 0, 0);
-      if (ctx) {
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.fillStyle = cover();
-        ctx.fillRect(0, 0, box.width, box.height);
-      }
-    };
-
-    const scratch = (event) => {
-      if (!ctx) return;
-      const box = canvas.getBoundingClientRect();
-      ctx.globalCompositeOperation = 'destination-out';
-      ctx.beginPath();
-      ctx.arc(event.clientX - box.left, event.clientY - box.top, Math.max(28, box.width * 0.07), 0, Math.PI * 2);
-      ctx.fill();
-      panel.classList.add('is-started');
-    };
-
-    canvas.addEventListener('pointerdown', (e) => { drawing = true; canvas.setPointerCapture(e.pointerId); scratch(e); });
-    canvas.addEventListener('pointermove', (e) => drawing && scratch(e));
-    // Once most of the cover is scratched away, clear the rest so small screens don't
-    // have to scratch every corner. Samples the canvas alpha on a coarse grid.
-    const clearedShare = () => {
-      if (!ctx) return 0;
-      const { width, height } = canvas;
-      const data = ctx.getImageData(0, 0, width, height).data;
-      let clear = 0, total = 0;
-      for (let y = 0; y < height; y += 12) for (let x = 0; x < width; x += 12) {
-        total++;
-        if (data[(y * width + x) * 4 + 3] < 128) clear++;
-      }
-      return total ? clear / total : 0;
-    };
-    canvas.addEventListener('pointerup', () => {
-      drawing = false;
-      if (clearedShare() > 0.45) panel.classList.add('is-revealed');
-    });
-    canvas.addEventListener('pointercancel', () => { drawing = false; });
-    panel.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); panel.classList.add('is-revealed', 'is-started'); }
-    });
-
-    resize();
-    window.addEventListener('resize', resize, { passive: true });
-  }
-</script>
 
 </body>
 </html>

@@ -55,6 +55,8 @@ function toEmbed(raw, { autoplay = true } = {}) {
 }
 
 const ICON_CLOSE = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+const ICON_EXPAND = '<svg class="i-expand" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>';
+const ICON_COLLAPSE = '<svg class="i-collapse" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>';
 
 const dialog = document.createElement('dialog');
 dialog.className = 'pm';
@@ -72,6 +74,10 @@ dialog.innerHTML = `
       <p class="pm-empty" hidden>This experience isn’t available right now.</p>
       <div class="pm-player" hidden>
         <div class="pm-frame"></div>
+        <div class="pm-tools" hidden>
+          <button type="button" class="pm-expand">${ICON_EXPAND}${ICON_COLLAPSE}<span class="pm-expand-label">Full screen</span></button>
+        </div>
+        <p class="pm-device-note">This interactive demo is designed for larger screens. For the best experience, please view it on a laptop or desktop.</p>
         <div class="pm-source" hidden>
           <p class="pm-source-line"><span class="pm-source-lead">Trouble viewing it here? </span><a class="pm-source-link" target="_blank" rel="noopener">Open the document directly ↗</a></p>
           <p class="pm-note" hidden></p>
@@ -86,6 +92,7 @@ const els = {
   close: $('.pm-close'), initial: $('.pm-initial'), title: $('.pm-title'),
   category: $('.pm-category'), desc: $('.pm-desc'), empty: $('.pm-empty'),
   player: $('.pm-player'), frame: $('.pm-frame'),
+  tools: $('.pm-tools'), expand: $('.pm-expand'), expandLabel: $('.pm-expand-label'),
   source: $('.pm-source'), sourceLink: $('.pm-source-link'), note: $('.pm-note'),
   sourceLead: $('.pm-source-lead'), sourceLine: $('.pm-source-line'),
 };
@@ -127,7 +134,8 @@ function docHref(raw, src) {
 function showEmpty() {
   els.frame.replaceChildren();
   els.source.hidden = true;
-  dialog.classList.remove('pm--wide', 'pm--doc');
+  els.tools.hidden = true;
+  dialog.classList.remove('pm--wide', 'pm--doc', 'pm--arcade');
   els.player.hidden = true;
   els.empty.hidden = false;
 }
@@ -145,16 +153,22 @@ function showPlayer(src) {
     media.preload = 'metadata';
     media.autoplay = current.autoplay;
     if (current.poster) media.poster = current.poster;
-    media.setAttribute('aria-label', `Video — ${current.label}`);
+    media.setAttribute('aria-label', `Video: ${current.label}`);
   } else {
     media = document.createElement('iframe');
     media.src = src;
-    media.title = `${doc ? 'Document' : course ? 'Course' : 'Video'} — ${current.label}`;
+    media.title = `${doc ? 'Document' : course ? 'Course' : 'Video'}: ${current.label}`;
     media.allow = 'autoplay; fullscreen; picture-in-picture; encrypted-media; clipboard-write';
     media.allowFullscreen = true;
     media.referrerPolicy = 'strict-origin-when-cross-origin';
   }
   els.frame.replaceChildren(media);
+  // Documents get a full-screen button. Video players bring their own, and Arcade demos
+  // are landscape recordings that full screen can't enlarge on a phone, so on touch
+  // screens they carry a "best on a laptop or desktop" note instead (CSS: .pm--arcade).
+  const arcade = src.startsWith('https://demo.arcade.software/');
+  dialog.classList.toggle('pm--arcade', arcade);
+  els.tools.hidden = local || arcade || /^https:\/\/(www\.youtube\.com|player\.vimeo\.com|www\.loom\.com)\//.test(src);
   // The fallback link is only for documents hosted elsewhere (an http(s) source); a
   // same-site document has nothing to fall back to. A note (data-note) can accompany any media.
   const external = doc && /^https?:\/\//i.test(current.source);
@@ -181,7 +195,7 @@ function fitFrame() {
   const frame = els.frame;
   frame.style.width = '';
   frame.style.height = '';
-  if (!dialog.open || els.player.hidden) return;
+  if (!dialog.open || els.player.hidden || dialog.classList.contains('pm--full')) return;
   const over = dialog.scrollHeight - dialog.clientHeight;
   if (over <= 0) return;
   const h = frame.getBoundingClientRect().height - over;
@@ -190,6 +204,7 @@ function fitFrame() {
 }
 
 function open(trigger) {
+  setFull(false);
   const p = readProject(trigger);
   let title = p.titleEl?.cloneNode(true);
   if (!title) { title = document.createElement('span'); title.textContent = p.title || 'Project'; }
@@ -224,6 +239,42 @@ function open(trigger) {
   els.close.focus();
 }
 
+// Full screen for documents. Real full screen where the browser allows it
+// (desktop, Android, iPad); iPhone only allows it for video, so there the modal itself
+// fills the screen instead. Android also turns to landscape while in full screen.
+function setFull(on) {
+  dialog.classList.toggle('pm--full', on);
+  els.expandLabel.textContent = on ? 'Exit full screen' : 'Full screen';
+  fitFrame();
+}
+
+async function enterFull() {
+  setFull(true);
+  if (!dialog.requestFullscreen || document.fullscreenElement) return;
+  try {
+    await dialog.requestFullscreen({ navigationUI: 'hide' });
+    await screen.orientation?.lock?.('landscape');
+  } catch { /* not available here: the full-screen layout still applies */ }
+}
+
+function exitFull() {
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  try { screen.orientation?.unlock?.(); } catch { /* not supported */ }
+  setFull(false);
+}
+
+els.expand.addEventListener('click', () => {
+  if (dialog.classList.contains('pm--full')) exitFull(); else enterFull();
+});
+// Leaving real full screen (Esc, back gesture) also leaves the full-screen layout.
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement && dialog.classList.contains('pm--full')) setFull(false);
+});
+// Esc in the full-screen layout returns to the normal modal instead of closing it.
+dialog.addEventListener('cancel', (e) => {
+  if (dialog.classList.contains('pm--full')) { e.preventDefault(); exitFull(); }
+});
+
 window.addEventListener('resize', fitFrame);
 
 els.close.addEventListener('click', () => dialog.close());
@@ -234,6 +285,7 @@ dialog.addEventListener('pointerdown', (e) => { pressedBackdrop = e.target === d
 dialog.addEventListener('click', (e) => { if (pressedBackdrop && e.target === dialog) dialog.close(); });
 
 dialog.addEventListener('close', () => {
+  if (dialog.classList.contains('pm--full')) exitFull();
   els.frame.replaceChildren();   // unloading the iframe stops playback
   document.documentElement.classList.remove('pm-open');
   lastTrigger?.focus();

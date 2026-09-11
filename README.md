@@ -38,7 +38,7 @@ accents — the moment a saturated color becomes a section background, the airin
 | Raised block | `--card` #EDE8E2 | case image sections |
 | Hairline | `--line` #E6E1DA | every divider and border |
 | Type | `--ink` / `--ink-2` / `--ink-3` | body / secondary / labels + captions |
-| Action | `--accent` (`--teal-500`) | buttons, focus rings, scratch cover, dots |
+| Action | `--accent` (`--teal-500`) | buttons, focus rings, dots |
 
 ### Typography
 
@@ -52,7 +52,7 @@ one variable file per subset, declared once with `font-weight: 400 600`, so all 
 from the same bytes (4 font files total, ~64K).
 
 DM Serif Display is wider than the face it replaced, so it sits closer to its container on the
-narrow breakpoint. If you change the scratch-panel wording, re-check that it still fits on mobile.
+narrow breakpoint. If you change the hero name or title, re-check that it still fits on mobile.
 
 ### Project slot colors
 
@@ -106,9 +106,8 @@ Project links (`Experience` buttons, `case-button`) currently point at `#`.
   homepage and `.case-01`…`.case-05` on the body of each case page.
 - Case pages vary slightly by design: 01 and 04 have a full-bleed image section, 02 has an optional
   "Project notice" block, 03 frames its preview in a browser chrome, 05 is the simplest.
-- The hero scratch panel is ~40 lines of vanilla JS at the bottom of `index.html`. It reads its
-  cover color from `--blue`, so it follows your palette. Delete the `.scratch-reveal` div and the
-  script together if you don't want it.
+- The hero shows the name and title (`.hero-identity`) centred on the page, level with "Hello";
+  on phones it sits above "Hello".
 - To use fewer than five projects, delete the extra `<article class="project-tile...">` blocks and
   their `projects/NN/` directories. The mosaic is a CSS grid and will reflow.
 
@@ -178,8 +177,6 @@ are this project's own; the fonts (DM Serif Display, Manrope) are open source un
 - Keyboard and screen readers: a "Skip to main content" link on every page, one consistent
   focus ring, named "Experience" links, sequential headings, and motion switched off for
   visitors who ask their device to reduce it. Muted text (`--ink-3`) clears 4.5:1 contrast.
-- Hero scratch panel: vertical swipes scroll the page on phones; the cover clears itself once
-  about half is scratched; Enter or Space reveals it from the keyboard.
 - **Governance guide.** `files/ID Governance Guidelines.docx.pdf` is shown as
   `files/id-governance-guide.html` — page images (`files/id-governance-guide/`) with each
   page's text kept for screen readers — because phones can't display a PDF inside a page.
