@@ -1,0 +1,8 @@
+# Left out of the published site (files stay on this computer).
+# Original screen recordings: the site plays the compressed .mp4 versions, and the
+# 108 MB original is over GitHub's 100 MB per-file limit.
+*.mov
+# Storyline course: not linked from the site. Delete this line to publish it.
+courses/
+# macOS system files
+.DS_Store

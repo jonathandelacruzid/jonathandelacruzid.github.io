@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HR Analytics notebook — Jonathan De La Cruz</title>
+<!-- Rendered from the original Colab notebook for display in the portfolio. -->
+<style>
+@font-face{font-family:Manrope;src:url(/_astro/manrope-latin-normal.woff2) format("woff2");font-weight:400 600;font-display:swap}
+@font-face{font-family:"DM Serif Display";src:url(/_astro/dm-serif-display-latin-400-normal.woff2) format("woff2");font-display:swap}
+:root{--paper:#FBFAF8;--warm:#F5F2EE;--line:#E6E1DA;--ink:#1F1D1B;--ink2:#4A453F;--ink3:#655E57;--plum:#7C6A9C}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.6 Manrope,system-ui,sans-serif}
+main{max-width:52rem;margin:0 auto;padding:2rem 1.5rem 4rem}
+header{border-bottom:1px solid var(--line);padding-bottom:1.25rem;margin-bottom:1.25rem}
+h1{margin:0;font:400 clamp(1.6rem,4vw,2.1rem)/1.1 "DM Serif Display",Georgia,serif}
+.meta{margin:.6rem 0 0;font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--plum)}
+h2,h3,h4{margin:1.9rem 0 .5rem;font-family:"DM Serif Display",Georgia,serif;font-weight:400;line-height:1.15}
+h2{font-size:1.55rem} h3{font-size:1.3rem} h4{font-size:1.1rem}
+p,li{color:var(--ink2)} ul{padding-left:1.2rem}
+code{font:.85em ui-monospace,Menlo,Consolas,monospace;background:var(--warm);padding:.1em .35em;border-radius:4px}
+a{color:var(--plum)}
+.cell{margin:1rem 0}
+.label{margin:1.4rem 0 .35rem;font-size:.68rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3)}
+pre{margin:0;padding:1rem 1.1rem;overflow-x:auto;border-radius:.6rem;font:.78rem/1.55 ui-monospace,Menlo,Consolas,monospace;tab-size:4}
+pre.code{background:#1F1D1B;color:#FBFAF8}
+pre.out{margin-top:.5rem;background:var(--warm);color:var(--ink2);border:1px solid var(--line)}
+.t-c{color:#B8B2AA;font-style:italic} .t-s{color:#F5C97F} .t-k{color:#9E86C0} .t-n{color:#8FD6F0}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%} .meta{font-size:.78rem} .label{font-size:.75rem} p,li{overflow-wrap:break-word} a{overflow-wrap:anywhere} pre:focus-visible{outline:3px solid var(--plum);outline-offset:2px}
+h2.h4{font-size:1.1rem}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>HR Analytics: Job Change of Data Scientists</h1>
+  <p class="meta">Python · pandas · Google Colab — graduate coursework</p>
+</header>
+<section class="cell md"><p><strong>Objective:</strong> Your task is to take the raw &quot;HR Analytics&quot; dataset and transform it into a clean, analysis-ready dataset. You will handle significant missing data and engineer new features from complex columns to prepare the data for predicting which data scientists will look for a new job.</p></section>
+<section class="cell md"><h2 class="h4"><strong>Setup: Download and Place the Data</strong></h2>
+<ul>
+<li>Dataset page from Kaggle: <a href="https://www.kaggle.com/datasets/arashnic/hr-analytics-job-change-of-data-scientists" target="_blank" rel="noopener">https://www.kaggle.com/datasets/arashnic/hr-analytics-job-change-of-data-scientists</a></li>
+<li>Click the <strong>Download</strong> button.</li>
+<li><strong>Kaggle_HR_Analytics</strong>.</li>
+<li>Upload the dataset files into this folder.</li>
+</ul></section>
+<section class="cell code-cell"><p class="label">In [1]</p><pre tabindex="0" class="code"><span class="t-c"># Import necessary libraries</span>
+<span class="t-k">import</span> pandas <span class="t-k">as</span> pd
+<span class="t-k">from</span> google.colab <span class="t-k">import</span> drive
+
+<span class="t-c"># Mount Google Drive</span>
+drive.mount(<span class="t-s">&#x27;/content/drive&#x27;</span>)
+
+<span class="t-c"># Define your specific file path</span>
+file_path = <span class="t-s">&#x27;/content/drive/My Drive/Colab Notebooks/LTEC 5601/Kaggle_HR_Analytics/&#x27;</span></pre><pre tabindex="0" class="out">Mounted at /content/drive</pre></section>
+<section class="cell md"><h2 class="h4"><strong>Part 1: Initial Data Loading &amp; Inspection</strong></h2>
+<p>Load the <code>aug_train.csv</code> file from your folder and perform an initial inspection.</p></section>
+<section class="cell code-cell"><p class="label">In [2]</p><pre tabindex="0" class="code"><span class="t-c"># Loading aug_train.csv</span>
+df = pd.read_csv(<span class="t-s">&#x27;/content/drive/My Drive/Colab Notebooks/LTEC 5601/Kaggle_HR_Analytics/aug_train.csv&#x27;</span>)
+
+<span class="t-c">#Displaying the first 5 rows and info summary</span>
+
+print(<span class="t-s">&quot;Initial DataFrame Head:&quot;</span>)
+print(df.head())
+print(<span class="t-s">&quot;\nMissing Values Count:&quot;</span>)
+print(df.isnull().sum())</pre><pre tabindex="0" class="out">Initial DataFrame Head:
+   enrollee_id      city  city_development_index gender  \
+0         8949  city_103                   0.920   Male   
+1        29725   city_40                   0.776   Male   
+2        11561   city_21                   0.624    NaN   
+3        33241  city_115                   0.789    NaN   
+4          666  city_162                   0.767   Male   
+
+       relevent_experience enrolled_university education_level  \
+0  Has relevent experience       no_enrollment        Graduate   
+1   No relevent experience       no_enrollment        Graduate   
+2   No relevent experience    Full time course        Graduate   
+3   No relevent experience                 NaN        Graduate   
+4  Has relevent experience       no_enrollment         Masters   
+
+  major_discipline experience company_size    company_type last_new_job  \
+0             STEM        &gt;20          NaN             NaN            1   
+1             STEM         15        50-99         Pvt Ltd           &gt;4   
+2             STEM          5          NaN             NaN        never   
+3  Business Degree         &lt;1          NaN         Pvt Ltd        never   
+4             STEM        &gt;20        50-99  Funded Startup            4   
+
+   training_hours  target  
+0              36     1.0  
+1              47     0.0  
+2              83     0.0  
+3              52     1.0  
+4               8     0.0  
+
+Missing Values Count:
+enrollee_id                  0
+city                         0
+city_development_index       0
+gender                    4508
+relevent_experience          0
+enrolled_university        386
+education_level            460
+major_discipline          2813
+experience                  65
+company_size              5938
+company_type              6140
+last_new_job               423
+training_hours               0
+target                       0
+dtype: int64</pre></section>
+<section class="cell md"><h2 class="h4"><strong>Part 2: Data Cleaning &amp; Imputation Strategies</strong></h2>
+<p>Your primary goal in this section is to handle all missing data. Each group of columns requires a different strategy.</p>
+<p><strong>Task 2.1: Impute Columns with Few Missing Values</strong></p>
+<ul>
+<li>Requirement 1: For the <code>gender</code>, <code>enrolled_university</code>, and <code>education_level</code> columns, all missing values must be filled.</li>
+<li>Requirement 2: The value used for filling must be the <strong>mode</strong> (the most frequent value) of each respective column.</li>
+</ul>
+<p><strong>Task 2.2: Impute Columns with Many Missing Values</strong></p>
+<ul>
+<li>Requirement 1: For the <code>major_discipline</code>, <code>company_size</code>, and <code>company_type</code> columns, all missing values must be filled.</li>
+<li>Requirement 2: The value used for filling must be the literal string <code>&#x27;Missing&#x27;</code>.</li>
+</ul>
+<p><strong>Task 2.3: Impute Columns to Prepare for Numeric Conversion</strong></p>
+<ul>
+<li>Requirement 1: All missing values in the <code>experience</code> column must be filled with the string <code>&#x27;0&#x27;</code>.</li>
+<li>Requirement 2: All missing values in the <code>last_new_job</code> column must be filled with the number <code>0</code>.</li>
+</ul></section>
+<section class="cell code-cell"><p class="label">In [3]</p><pre tabindex="0" class="code"><span class="t-c"># Task 2.1: impute categorical features with their mode</span>
+<span class="t-k">for</span> col <span class="t-k">in</span> [<span class="t-s">&#x27;gender&#x27;</span>, <span class="t-s">&#x27;enrolled_university&#x27;</span>, <span class="t-s">&#x27;education_level&#x27;</span>]:
+  mode_val = df[col].mode()[<span class="t-n">0</span>]
+  df[col] = df[col].fillna(mode_val)
+
+<span class="t-c"># Task 2.2: Fill features with many missing values with a &quot;Missing&quot; category</span>
+<span class="t-k">for</span> col <span class="t-k">in</span> [<span class="t-s">&#x27;major_discipline&#x27;</span>, <span class="t-s">&#x27;company_size&#x27;</span>, <span class="t-s">&#x27;company_type&#x27;</span>]:
+  df[col] = df[col].fillna(<span class="t-s">&#x27;Missing&#x27;</span>)
+
+<span class="t-c"># Task 2.3: Fill in missing &#x27;last_new_job&#x27; and &#x27;experience&#x27; values</span>
+df[<span class="t-s">&#x27;last_new_job&#x27;</span>] =df[<span class="t-s">&#x27;last_new_job&#x27;</span>].fillna(<span class="t-n">0</span>)
+df[<span class="t-s">&#x27;experience&#x27;</span>] = df [<span class="t-s">&#x27;experience&#x27;</span>].fillna(<span class="t-n">0</span>)
+
+print(<span class="t-s">&#x27;All missing values have been done correctly with all the updated methods&#x27;</span>)</pre><pre tabindex="0" class="out">All missing values have been done correctly with all the updated methods</pre></section>
+<section class="cell md"><h2 class="h4"><strong>Part 3: Feature Engineering</strong></h2>
+<p>Create new, more useful features by cleaning and transforming existing columns.</p>
+<p><strong>Task 3.1: Clean the experience Column</strong></p>
+<ul>
+<li>Requirement 1: The final experience column must be of a numeric data type (e.g., integer or float).</li>
+<li>Requirement 2: All instances of the string &#x27;&lt;1&#x27; must be converted to the number 0.</li>
+<li>Requirement 3: All instances of the string &#x27;&gt;20&#x27; must be converted to the number 21.</li>
+</ul>
+<p><strong>Task 3.2: Clean the last_new_job Column</strong></p>
+<ul>
+<li>Requirement 1: The final last_new_job column must be of a numeric data type.</li>
+<li>Requirement 2: All instances of the string &#x27;never&#x27; must be converted to the number 0.</li>
+<li>Requirement 3: All instances of the string &#x27;&gt;4&#x27; must be converted to the number 5.</li>
+</ul>
+<p><strong>Task 3.3: Create the experience_level Feature</strong></p>
+<ul>
+<li>Requirement 1: You must create a new column named experience_level.</li>
+<li>Requirement 2: This column must contain categorical data derived from the cleaned experience column.</li>
+<li>Requirement 3: The categories must map to the following numerical ranges:</li>
+</ul>
+<p>&#x27;Entry&#x27;: 0-5 years of experience. &#x27;Mid&#x27;: 6-10 years of experience. &#x27;Senior&#x27;: 11-15 years of experience. &#x27;Expert&#x27;: 16 or more years of experience.</p></section>
+<section class="cell code-cell"><p class="label">In [4]</p><pre tabindex="0" class="code"><span class="t-c"># Task 3.1: Clean and convert &#x27;experience&#x27; to numeric</span>
+df[<span class="t-s">&#x27;experience&#x27;</span>] =df[<span class="t-s">&#x27;experience&#x27;</span>].replace(<span class="t-s">&#x27;&gt;20&#x27;</span>, <span class="t-s">&#x27;21&#x27;</span>).replace(<span class="t-s">&#x27;&lt;1&#x27;</span>, <span class="t-s">&#x27;0&#x27;</span>)
+df[<span class="t-s">&#x27;experience&#x27;</span>] = pd.to_numeric(df[<span class="t-s">&#x27;experience&#x27;</span>])
+print(<span class="t-s">&quot;Cleaned and converted &#x27;experience&#x27; column to numeric&quot;</span>)
+
+<span class="t-c"># Task 3.2: Clean and convert &#x27;last_new_job&#x27; to numeric</span>
+df[<span class="t-s">&#x27;last_new_job&#x27;</span>] = df[<span class="t-s">&#x27;last_new_job&#x27;</span>].replace(<span class="t-s">&#x27;&gt;4&#x27;</span>, <span class="t-s">&#x27;5&#x27;</span>).replace(<span class="t-s">&#x27;never&#x27;</span>, <span class="t-s">&#x27;0&#x27;</span>)
+df[<span class="t-s">&#x27;last_new_job&#x27;</span>] = pd.to_numeric(df[<span class="t-s">&#x27;last_new_job&#x27;</span>])
+print(<span class="t-s">&quot;Cleaned and converted &#x27;last_new_job&#x27; column to numeric&quot;</span>)
+<span class="t-c"># Task 3.3: Create &#x27;experience_level&#x27; by binning the &#x27;experience&#x27; feature</span>
+<span class="t-c">#Define the edges for our bins and the labels for them</span>
+bins = [-<span class="t-n">1</span>,<span class="t-n">5</span>,<span class="t-n">10</span>,<span class="t-n">15</span>,<span class="t-n">22</span>]
+labels =[<span class="t-s">&#x27;Entry&#x27;</span>, <span class="t-s">&#x27;Mid&#x27;</span>, <span class="t-s">&#x27;Senior&#x27;</span>, <span class="t-s">&#x27;Expert&#x27;</span>]
+df[<span class="t-s">&#x27;experience_level&#x27;</span>] =pd.cut(df[<span class="t-s">&#x27;experience&#x27;</span>], bins=bins, labels=labels, right=<span class="t-k">True</span>)
+print(<span class="t-s">&quot;Created &#x27;experience_level&#x27; feature by binning &#x27;experience&#x27;.&quot;</span>)</pre><pre tabindex="0" class="out">Cleaned and converted &#x27;experience&#x27; column to numeric
+Cleaned and converted &#x27;last_new_job&#x27; column to numeric
+Created &#x27;experience_level&#x27; feature by binning &#x27;experience&#x27;.</pre></section>
+<section class="cell md"><h2 class="h4"><strong>Part 4: Final Formatting for Modeling</strong></h2>
+<p>This is the final preparation step to make our dataset ready for a machine learning algorithm. Our goals are to remove any information that isn&#x27;t useful for prediction and to convert all our data into a purely numerical format, which is a requirement for most models.</p>
+<p><strong>Task 4.1: Drop Unnecessary Columns</strong></p>
+<ul>
+<li>Requirement 1: The <code>enrollee_id</code> and <code>city</code> columns must be removed. <code>enrollee_id</code> is a unique identifier with no predictive value, and <code>city</code> has too many unique categories to be easily used in a model.</li>
+<li>Requirement 2: The original <code>experience</code> column must be removed, as it has been replaced by the more useful <code>experience_level</code> feature.</li>
+</ul>
+<p><strong>Task 4.2: One-Hot Encode Categorical Features</strong></p>
+<ul>
+<li>Requirement 1: All remaining columns with text or categorical data must be converted into a numeric format using the One-Hot Encoding technique.</li>
+<li>Requirement 2: This technique should be applied to the following columns: <code>gender</code>, <code>relevent_experience</code>, <code>enrolled_university</code>, <code>education_level</code>, <code>major_discipline</code>, <code>company_size</code>, <code>company_type</code>, and <code>experience_level</code>.</li>
+<li>Requirement 3: Use the <code>drop_first=True</code> parameter during encoding to avoid redundant columns.</li>
+</ul></section>
+<section class="cell code-cell"><p class="label">In [5]</p><pre tabindex="0" class="code"><span class="t-c"># Task 4.1: Drop Unnecessary Columns</span>
+cols_to_drop = [<span class="t-s">&#x27;enrollee_id&#x27;</span>, <span class="t-s">&#x27;city&#x27;</span>, <span class="t-s">&#x27;experience&#x27;</span>]
+df.drop(columns = cols_to_drop, inplace= <span class="t-k">True</span>)
+print(f<span class="t-s">&quot;Dropped colums: {cols_to_drop}&quot;</span>)
+<span class="t-c"># Task 4.2: One-Hot Encode Categorical Features</span>
+<span class="t-c"># List all columns that need to be converted from text to numeric</span>
+categorical_cols = [
+         <span class="t-s">&#x27;gender&#x27;</span>, <span class="t-s">&#x27;relevent_experience&#x27;</span>, <span class="t-s">&#x27;enrolled_university&#x27;</span>,
+                    <span class="t-s">&#x27;education_level&#x27;</span>, <span class="t-s">&#x27;major_discipline&#x27;</span>, <span class="t-s">&#x27;company_size&#x27;</span>,
+                    <span class="t-s">&#x27;company_type&#x27;</span>, <span class="t-s">&#x27;experience_level&#x27;</span>
+
+
+                    ]
+
+<span class="t-c"># Use pandas get_dummies to perform one-hot encoding</span>
+df = pd.get_dummies(df, columns=categorical_cols, drop_first=<span class="t-k">True</span>)
+
+print(<span class="t-s">&quot;\nConverted categorical feauture to numeric format using one-hot encoding&quot;</span>)</pre><pre tabindex="0" class="out">Dropped colums: [&#x27;enrollee_id&#x27;, &#x27;city&#x27;, &#x27;experience&#x27;]
+
+Converted categorical feauture to numeric format using one-hot encoding</pre></section>
+<section class="cell md"><h2 class="h4"><strong>Part 5: Final Review &amp; Save</strong></h2>
+<p>This is the final step. We&#x27;ll do one last check on our DataFrame and then save our work to a new file in your Google Drive folder.</p></section>
+<section class="cell code-cell"><p class="label">In [6]</p><pre tabindex="0" class="code"><span class="t-c"># 1. Display the first 5 rows of your final DataFrame to see all the new columns.</span>
+print(<span class="t-s">&quot;\nFinal Cleaned DataFrame Head:&quot;</span>)
+print(df.head())
+
+<span class="t-c"># 2. Display the .info() summary to confirm all columns are numeric and have no missing values.</span>
+print(<span class="t-s">&quot;\nFinal Cleaned DataFrame Info:&quot;</span>)
+df.info()
+
+<span class="t-c"># 3. Define the full path for the output file</span>
+output_path = file_path + <span class="t-s">&#x27;hr_analysis_ready.csv&#x27;</span>
+
+<span class="t-c"># 4. Save the final DataFrame to a new CSV file. index=False prevents pandas from writing the row numbers as a new column.</span>
+df.to_csv(output_path, index=<span class="t-k">False</span>)
+
+print(f<span class="t-s">&quot;\nProcess complete! Your analysis-ready file has been saved to: {output_path}&quot;</span>)</pre><pre tabindex="0" class="out">
+Final Cleaned DataFrame Head:
+   city_development_index  last_new_job  training_hours  target  gender_Male  \
+0                   0.920             1              36     1.0         True   
+1                   0.776             5              47     0.0         True   
+2                   0.624             0              83     0.0         True   
+3                   0.789             0              52     1.0         True   
+4                   0.767             4               8     0.0         True   
+
+   gender_Other  relevent_experience_No relevent experience  \
+0         False                                       False   
+1         False                                        True   
+2         False                                        True   
+3         False                                        True   
+4         False                                       False   
+
+   enrolled_university_Part time course  enrolled_university_no_enrollment  \
+0                                 False                               True   
+1                                 False                               True   
+2                                 False                              False   
+3                                 False                               True   
+4                                 False                               True   
+
+   education_level_High School  ...  company_size_Missing  \
+0                        False  ...                  True   
+1                        False  ...                 False   
+2                        False  ...                  True   
+3                        False  ...                  True   
+4                        False  ...                 False   
+
+   company_type_Funded Startup  company_type_Missing  company_type_NGO  \
+0                        False                  True             False   
+1                        False                 False             False   
+2                        False                  True             False   
+3                        False                 False             False   
+4                         True                 False             False   
+
+   company_type_Other  company_type_Public Sector  company_type_Pvt Ltd  \
+0               False                       False                 False   
+1               False                       False                  True   
+2               False                       False                 False   
+3               False                       False                  True   
+4               False                       False                 False   
+
+   experience_level_Mid  experience_level_Senior  experience_level_Expert  
+0                 False                    False                     True  
+1                 False                     True                    False  
+2                 False                    False                    False  
+3                 False                    False                    False  
+4                 False                    False                     True  
+
+[5 rows x 36 columns]
+
+Final Cleaned DataFrame Info:
+&lt;class &#x27;pandas.core.frame.DataFrame&#x27;&gt;
+RangeIndex: 19158 entries, 0 to 19157
+Data columns (total 36 columns):
+ #   Column                                      Non-Null Count  Dtype  
+---  ------                                      --------------  -----  
+ 0   city_development_index                      19158 non-null  float64
+ 1   last_new_job                                19158 non-null  int64  
+ 2   training_hours                              19158 non-null  int64  
+ 3   target                                      19158 non-null  float64
+ 4   gender_Male                                 19158 non-null  bool   
+ 5   gender_Other                                19158 non-null  bool   
+ 6   relevent_experience_No relevent experience  19158 non-null  bool   
+ 7   enrolled_university_Part time course        19158 non-null  bool   
+ 8   enrolled_university_no_enrollment           19158 non-null  bool   
+ 9   education_level_High School                 19158 non-null  bool   
+ 10  education_level_Masters                     19158 non-null  bool   
+ 11  education_level_Phd                         19158 non-null  bool   
+ 12  education_level_Primary School              19158 non-null  bool   
+ 13  major_discipline_Business Degree            19158 non-null  bool   
+ 14  major_discipline_Humanities                 19158 non-null  bool   
+ 15  major_discipline_Missing                    19158 non-null  bool   
+ 16  major_discipline_No Major                   19158 non-null  bool   
+ 17  major_discipline_Other                      19158 non-null  bool   
+ 18  major_discipline_STEM                       19158 non-null  bool   
+ 19  company_size_100-500                        19158 non-null  bool   
+ 20  company_size_1000-4999                      19158 non-null  bool   
+ 21  company_size_10000+                         19158 non-null  bool   
+ 22  company_size_50-99                          19158 non-null  bool   
+ 23  company_size_500-999                        19158 non-null  bool   
+ 24  company_size_5000-9999                      19158 non-null  bool   
+ 25  company_size_&lt;10                            19158 non-null  bool   
+ 26  company_size_Missing                        19158 non-null  bool   
+ 27  company_type_Funded Startup                 19158 non-null  bool   
+ 28  company_type_Missing                        19158 non-null  bool   
+ 29  company_type_NGO                            19158 non-null  bool   
+ 30  company_type_Other                          19158 non-null  bool   
+ 31  company_type_Public Sector                  19158 non-null  bool   
+ 32  company_type_Pvt Ltd                        19158 non-null  bool   
+ 33  experience_level_Mid                        19158 non-null  bool   
+ 34  experience_level_Senior                     19158 non-null  bool   
+ 35  experience_level_Expert                     19158 non-null  bool   
+dtypes: bool(32), float64(2), int64(2)
+memory usage: 1.2 MB
+
+Process complete! Your analysis-ready file has been saved to: /content/drive/My Drive/Colab Notebooks/LTEC 5601/Kaggle_HR_Analytics/hr_analysis_ready.csv</pre></section>
+<section class="cell md"><p>This output confirms your dataset is now fully prepared for machine learning.</p>
+<p>All categorical text features (like <code>gender</code> or <code>experience_level</code>) have been successfully converted into numerical <code>True/False</code> columns through one-hot encoding. Your final DataFrame now has 36 columns, all in a numeric format with no missing values.</p>
+<p>This clean, purely numerical format is exactly what machine learning algorithms require to train a model to predict the <code>target</code> variable.</p></section>
+</main>
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="HR Analytics, Model-Ready — transforming a raw HR dataset into a clean, fully numeric, machine-learning-ready file in Python. A case study by Jonathan De La Cruz.">
+  <link rel="icon" type="image/png" href="/brand/logo.png">
+  <title>HR Analytics, Model-Ready — Jonathan De La Cruz</title>
+  <link rel="stylesheet" href="/_astro/global.C__PRQxV.css?v=2026091125">
+</head>
+<body class="case-page case-05">
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<header class="case-header">
+  <a class="case-home" href="/" aria-label="Back to home">
+    <img src="/brand/logo.png" alt=""><span>Jonathan De La Cruz</span>
+  </a>
+  <a href="/#projects">All projects</a>
+</header>
+
+<main id="main" tabindex="-1">
+
+  <!-- ============ HERO ============ -->
+  <section class="case-hero">
+    <div class="case-hero-copy">
+      <p class="project-status">Data analytics · Python</p>
+      <h1>HR Analytics,<br><em>Model-Ready</em></h1>
+      <p class="case-deck">Transforming a raw HR dataset into a clean, fully numeric, machine-learning-ready file in Python — part of how I keep building the data and AI skills my team relies on.</p>
+      <div class="case-actions">
+        <!-- Opens the rendered notebook in the modal; the fallback link goes to the original in Google Drive -->
+        <button type="button" class="case-button" data-project-modal aria-haspopup="dialog"
+                data-video="/files/hr-analytics-notebook.html"
+                data-source="https://drive.google.com/file/d/1SNDaXIW06cRSP-M-SgIktvwrudYh_VSO/view"
+                data-source-label="View the original notebook in Google Drive ↗"
+                data-note="Graduate coursework. The dataset is the public HR Analytics: Job Change of Data Scientists set on Kaggle."><span class="case-button-label">Open the experience</span><span class="case-button-hint" aria-hidden="true">Click here</span></button>
+      </div>
+    </div>
+      <div class="case-card-art" aria-hidden="true">
+        <span></span>
+        <img src="/images/cards/05.svg" alt="">
+      </div>
+  </section>
+
+  <!-- ============ WHY IT MATTERS ============ -->
+  <section class="case-intro">
+    <p class="case-number">Why it matters</p>
+    <h2>Data fluency is part of the job.</h2>
+    <p>Instructional design runs on data: survey results, learner metrics, completion and program reporting. At work, I build that reporting in Excel. To bring more rigor to it, I pursue challenging coursework in Python, machine learning and data preparation, then apply it to real datasets. This project, from my graduate Learning Technologies coursework, takes a messy public HR dataset and prepares it for a model that predicts which data scientists will look for a new job.</p>
+  </section>
+
+  <!-- ============ PIPELINE ============ -->
+  <section class="case-process dark-section">
+    <div class="process-heading">
+      <p class="case-number">The pipeline</p>
+      <h2>Clean.<br>Engineer.<br>Encode.</h2>
+    </div>
+    <ol class="journey-list">
+      <li><span>Profile the raw data</span>
+        <p>Loaded the dataset in Python with pandas in Google Colab and profiled its gaps — including 5,938 missing company-size values and 4,508 missing gender values.</p>
+      </li>
+      <li><span>Impute with intent</span>
+        <p>Filled lightly missing fields (gender, university enrollment, education level) with each column’s most frequent value, and gave heavily missing fields (major, company size, company type) an explicit “Missing” category so the gap itself stays visible to a model.</p>
+      </li>
+      <li><span>Engineer features</span>
+        <p>Converted text ranges such as “&lt;1”, “&gt;20”, “never” and “&gt;4” into numbers, then created an experience-level feature: Entry (0–5 years), Mid (6–10), Senior (11–15) and Expert (16+).</p>
+      </li>
+      <li><span>Format for modeling</span>
+        <p>Removed non-predictive columns (ID, city and raw experience) and one-hot encoded eight categorical features, producing a 36-column, fully numeric dataset with no missing values — ready to train a model.</p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ============ SKILLS ============ -->
+  <section class="practice case-impact" aria-labelledby="skills-title">
+    <div class="practice-intro">
+      <p class="section-label">What it demonstrates</p>
+      <h2 id="skills-title">Skills in action</h2>
+    </div>
+    <div class="practice-grid">
+      <article class="practice-item">
+        <h3>Python</h3>
+        <p>Data wrangling in pandas: profiling, imputation, type conversion and encoding in a reproducible notebook.</p>
+      </article>
+      <article class="practice-item">
+        <h3>ML-ready</h3>
+        <p>An understanding of what machine learning models require — clean, complete, numeric data — and how to get raw data there.</p>
+      </article>
+      <article class="practice-item">
+        <h3>Excel</h3>
+        <p>Day-to-day reporting at work on the survey, learner and program data that instructional design runs on.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ CONTINUOUS GROWTH ============ -->
+  <section class="decision-section section--warm">
+    <p class="case-number">Continuous growth</p>
+    <div class="decision-grid">
+      <article>
+        <h3>Challenging coursework</h3>
+        <p>I deliberately take courses that stretch me — Python, machine learning and data preparation — to bring more rigor to how an organization understands its data.</p>
+      </article>
+      <article>
+        <h3>An emerging ML practitioner</h3>
+        <p>I’m early in my machine learning journey and approach it deliberately, seeking out new datasets, coursework and projects that build on this foundation and expand what I can deliver.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ IMPACT ============ -->
+  <section class="practice case-impact" aria-labelledby="impact-title">
+    <div class="practice-intro">
+      <p class="section-label">The business impact</p>
+      <h2 id="impact-title">Value to the team</h2>
+    </div>
+    <div class="practice-grid">
+      <article class="practice-item">
+        <h3>0 gaps</h3>
+        <p>A raw dataset with thousands of missing values became a 36-column, fully numeric file with none — ready to train a model.</p>
+      </article>
+      <article class="practice-item">
+        <h3>Clearer reporting</h3>
+        <p>The same skills carry into my Excel reporting and learning analytics, turning survey and program data into clear, reliable reporting.</p>
+      </article>
+      <article class="practice-item">
+        <h3>Go-to resource</h3>
+        <p>That investment has made me my team’s go-to resource for data and analytics — and, because Python and machine learning sit at the core of AI, its point person for AI.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ ROLE ============ -->
+  <section class="case-role">
+    <p class="case-number">Role and contribution</p>
+    <h2>Python · pandas · Data Cleaning · Feature Engineering · ML Data Preparation</h2>
+    <p>Built the full pipeline in Python — inspection, imputation, feature engineering, encoding and export — as part of my M.S. in Learning Technologies at the University of North Texas. The same foundation shapes my day-to-day role as my team’s data, analytics and AI resource. As an emerging machine learning practitioner, I continue to look for opportunities to take this work further — from preparing data to training and evaluating models.</p>
+  </section>
+
+  <nav class="case-next" aria-label="Project navigation">
+    <p>Next case study</p>
+    <a href="/projects/06/">Governance, Simplified <span class="ui-arrow" aria-hidden="true"></span></a>
+  </nav>
+
+</main>
+
+<script type="module" src="/_astro/project-modal.js?v=2026091125"></script>
+</body>
+</html>
